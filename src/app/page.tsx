@@ -7,7 +7,6 @@ import { MovieGrid } from '../components/movieGrid';
 import { Carousel } from '../components/carousel';
 import { CartButton } from '@/components/cartButton';
 import { Footer } from '@/components/footer';
-import { Movie } from '@/types/movie';
 
 interface Movie {
   id: number;
