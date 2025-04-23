@@ -7,6 +7,7 @@ import { MovieGrid } from '../components/movieGrid';
 import { Carousel } from '../components/carousel';
 import { CartButton } from '@/components/cartButton';
 import { Footer } from '@/components/footer';
+import { Movie } from '@/types/movie';
 
 interface Movie {
   id: number;
@@ -23,7 +24,6 @@ export default function MovieShop() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [countdown, setCountdown] = useState(60);
 
-  // ⭐ ดึงหนัง popular มาตั้งต้น
   useEffect(() => {
     const fetchFeaturedMovies = async () => {
       const res = await axios.get(
@@ -35,11 +35,18 @@ export default function MovieShop() {
   }, []);
 
   const fetchMovies = async () => {
-    if (!query) return;
-    const res = await axios.get(
-      `https://api.themoviedb.org/3/search/movie?api_key=a773dfbf28186bb9dc9e1e217d188e0c&query=${query}`
-    );
-    setMovies(res.data.results);
+    if (!query.trim()) return;
+    try {
+      const res = await axios.get(
+        `https://api.themoviedb.org/3/search/movie?api_key=a773dfbf28186bb9dc9e1e217d188e0c&query=${encodeURIComponent(
+          query
+        )}`
+      );
+      console.log('Search result:', res.data.results);
+      setMovies(res.data.results);
+    } catch (error) {
+      console.error('Error fetching movies:', error);
+    }
   };
 
   const handleAddToCart = (movie: Movie) => {
@@ -91,12 +98,19 @@ export default function MovieShop() {
     localStorage.setItem('kino-cart', JSON.stringify(cart));
   }, [cart]);
 
+  // Use effect เพื่อ fetch ข้อมูลทุกครั้งที่มีการเปลี่ยนแปลงใน query
+  useEffect(() => {
+    if (query.trim()) {
+      fetchMovies();
+    }
+  }, [query]);
+
   const isSearching = query.trim().length > 0;
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <div className="flex items-center p-6 justify-between ">
-        <SearchBar query={query} setQuery={setQuery} onSearch={fetchMovies} />
+        <SearchBar query={query} setQuery={setQuery} onSearch={() => {}} />
         <CartButton
           cart={cart}
           total={total}
@@ -106,7 +120,10 @@ export default function MovieShop() {
       </div>
 
       {!isSearching && featuredMovies.length > 0 && (
-        <Carousel movies={featuredMovies.slice(0, 10)} />
+        <Carousel
+          movies={featuredMovies.slice(0, 10)}
+          onAddToCart={handleAddToCart}
+        />
       )}
       {!isSearching && featuredMovies.length > 0 && (
         <h2 className="text-2xl font-bold py-4 px-6">Popular Movies</h2>

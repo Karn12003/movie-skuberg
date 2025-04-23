@@ -18,7 +18,9 @@ export const SearchBar = ({ query, setQuery, onSearch }: Props) => {
           placeholder="Search movies..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onPressEnter={onSearch}
         />
+
         <Button
           className="bg-purple-600 hover:bg-purple-700 text-white"
           onClick={onSearch}

@@ -9,9 +9,10 @@ import { Movie } from '../types/movie';
 
 interface Props {
   movies: Movie[];
+  onAddToCart: (movie: Movie) => void;
 }
 
-export const Carousel: React.FC<Props> = ({ movies }) => {
+export const Carousel: React.FC<Props> = ({ movies, onAddToCart }) => {
   return (
     <div className="mb-6">
       <Swiper
@@ -21,7 +22,7 @@ export const Carousel: React.FC<Props> = ({ movies }) => {
         pagination={{ clickable: true }}
         spaceBetween={10}
         slidesPerView={1}
-        className=" overflow-hidden"
+        className="overflow-hidden"
       >
         {movies.map((movie) => (
           <SwiperSlide key={movie.id}>
@@ -35,6 +36,12 @@ export const Carousel: React.FC<Props> = ({ movies }) => {
                 <h3 className="text-xl font-semibold line-clamp-2">
                   {movie.title}
                 </h3>
+                <button
+                  className="mt-4 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded"
+                  onClick={() => onAddToCart(movie)}
+                >
+                  Add to Cart
+                </button>
               </div>
             </div>
           </SwiperSlide>
